@@ -294,6 +294,7 @@ def main():
         model = torch.nn.DataParallel(model).cuda()
 
     # load a saved checkpoint
+    print("this is checkpoint path", chkpoint_path)
     if os.path.isfile(chkpoint_path):
         print("=> loading checkpoint '{}'".format(chkpoint_path))
         checkpoint = torch.load(chkpoint_path)
@@ -303,6 +304,8 @@ def main():
         print("=> loaded checkpoint '{}' (epoch {})"
               .format(chkpoint_path, checkpoint['epoch']))
     else:
+        print("exiting")
+        exit()
         print("=> no checkpoint found at '{}'".format(chkpoint_path))
 
     cudnn.benchmark = True
@@ -344,9 +347,9 @@ def validate(val_loader, model, criterion):
 
         # measure accuracy and record loss
         prec1, prec3 = accuracy(output.data, target, topk=(1, 3))
-        losses.update(loss.data[0], input.size(0))
-        top1.update(prec1[0], input.size(0))
-        top3.update(prec3[0], input.size(0))
+        losses.update(loss.data, input.size(0))
+        top1.update(prec1, input.size(0))
+        top3.update(prec3, input.size(0))
 
         # measure elapsed time
         batch_time.update(time.time() - end)
